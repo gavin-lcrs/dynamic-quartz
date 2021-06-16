@@ -17,16 +17,15 @@ import java.util.concurrent.ScheduledFuture;
 @Component
 public class DynamicTask {
 
-    public static ConcurrentHashMap<String, ScheduledFuture> map = new ConcurrentHashMap<>();
-
-    @Autowired
-    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
-    private ScheduledFuture future;
-
     @Autowired
     private RedisUtils redisUtils;
 
+    @Autowired
+    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+
+    private ScheduledFuture future;
     public static final String LABEL_JOB = "label_job";
+    public static ConcurrentHashMap<String, ScheduledFuture> map = new ConcurrentHashMap<>();
 
     public void startCron() {
         String cron = "0/5 * * * * ?";
@@ -38,11 +37,11 @@ public class DynamicTask {
                     Thread.sleep(1000 * 10L);
                 } else {
                     for (Object obj : list) {
-                        String key = String.valueOf(obj);
-                        ScheduledFuture future = map.get(key);
+                        String sync = String.valueOf(obj);
+                        ScheduledFuture future = map.get(sync);
                         if (Objects.isNull(future)) {
-                            future = threadPoolTaskScheduler.schedule(new Thread(() -> log.info("执行定时任务{}", key)), new CronTrigger(cron));
-                            map.put(key, future);
+                            future = threadPoolTaskScheduler.schedule(new Thread(() -> log.info("执行任务{}的逻辑处理", sync)), new CronTrigger(cron));
+                            map.put(sync, future);
                         }
                     }
                 }
@@ -53,7 +52,7 @@ public class DynamicTask {
     }
 
     public void stopCron(String sync){
-        log.info("停止标签{}的定时任务", sync);
+        log.info("停止{}的定时任务", sync);
         redisUtils.ldel(LABEL_JOB, sync);
         ScheduledFuture future = map.get(sync);
         cancelFuture(future);
@@ -61,6 +60,7 @@ public class DynamicTask {
     }
 
     public void jobAdd(String sync){
+        log.info("添加{}的定时任务", sync);
         List<String> jobList = redisUtils.lGetString(LABEL_JOB, 0, -1);
         if (CollectionUtils.isEmpty(jobList) || !jobList.contains(sync)) {
             redisUtils.lSet(LABEL_JOB, sync);
