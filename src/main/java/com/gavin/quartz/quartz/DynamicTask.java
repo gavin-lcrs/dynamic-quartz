@@ -23,8 +23,8 @@ public class DynamicTask {
     @Autowired
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
-    private ScheduledFuture future;
     public static final String LABEL_JOB = "label_job";
+
     public static ConcurrentHashMap<String, ScheduledFuture> map = new ConcurrentHashMap<>();
 
     public void startCron() {
