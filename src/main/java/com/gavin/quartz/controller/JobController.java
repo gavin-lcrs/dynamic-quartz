@@ -20,14 +20,15 @@ public class JobController {
     private DynamicTask task;
 
     @GetMapping("/start")
-    public String jobStart(@RequestParam(value = "sync", required = false) String sync) {
-        task.jobAdd(sync);
+    public String jobStart(@RequestParam(value = "taskNo", required = false) String taskNo,
+                           @RequestParam(value = "cron", required = false) String cron) {
+        task.jobAdd(taskNo, cron);
         return "success";
     }
 
     @GetMapping("/stop")
-    public String jobStop(@RequestParam(value = "sync", required = false) String sync) {
-        task.stopCron(sync);
+    public String jobStop(@RequestParam(value = "taskNo", required = false) String taskNo) {
+        task.stopCron(taskNo);
         return "success";
     }
 }
