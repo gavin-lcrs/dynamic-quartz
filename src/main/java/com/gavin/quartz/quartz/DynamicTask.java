@@ -29,7 +29,7 @@ public class DynamicTask {
 
 
     public static final String TASK = "task";
-    public static final String TASK_CRON = "sync_cron";
+    public static final String TASK_CRON = "task_cron";
 
     public static ConcurrentHashMap<String, ScheduledFuture> map = new ConcurrentHashMap<>();
 
