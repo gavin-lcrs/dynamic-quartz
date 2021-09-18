@@ -1,6 +1,7 @@
 package com.gavin.quartz.common;
 
 import com.gavin.quartz.quartz.DynamicTask;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
  * @Date 2021/6/2
  * @Description 服务启动自动执行任务
  */
+@Slf4j
 @Component
 public class GetFormulaTask implements ApplicationRunner {
 
@@ -19,6 +21,7 @@ public class GetFormulaTask implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        task.startCron();
+        log.info("服务启动执行任务");
+//        task.serverStartExecutor();
     }
 }

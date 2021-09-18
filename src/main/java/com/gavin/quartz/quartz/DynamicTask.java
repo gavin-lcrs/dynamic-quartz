@@ -33,7 +33,10 @@ public class DynamicTask {
 
     public static ConcurrentHashMap<String, ScheduledFuture> map = new ConcurrentHashMap<>();
 
-    public void startCron() {
+    /**
+     * 服务启动时调用方法
+     */
+    public void serverStartExecutor() {
         try {
             while (true) {
                 // 查询所有task集合
@@ -42,29 +45,24 @@ public class DynamicTask {
                     log.info("没有任务 休息10s");
                     Thread.sleep(1000 * 10L);
                 } else {
-                    for (Object obj : list) {
-                        if (Objects.isNull(obj)) {
-                            continue;
-                        }
-                        String taskNo = String.valueOf(obj);
-                        ScheduledFuture future = map.get(taskNo);
-                        if (Objects.isNull(future)) {
-                            // 根据task名称获取任务执行规则cron
-                            Object o = redisUtils.get(String.format("%s_%s", TASK_CRON, taskNo));
-                            String cron = Objects.isNull(o) ? null : o.toString();
-                            if (StringUtils.isBlank(cron)) {
-                                continue;
-                            }
-                            Thread thread = new Thread(() -> quartzService.dealWithWork(taskNo));
-                            future = threadPoolTaskScheduler.schedule(thread, new CronTrigger(cron));
-                            map.put(taskNo, future);
-                        }
-                    }
+                    executTask(list);
                 }
             }
         } catch (Exception e) {
             log.error("定时任务异常", e);
         }
+    }
+
+    /**
+     * xxljob任务调度中心调用方法
+     */
+    public void xxljobExecutor(){
+        List<Object> list = redisUtils.lGet(TASK, 0, -1);
+        if (CollectionUtils.isEmpty(list)) {
+            log.info("当前没有任务");
+            return;
+        }
+        executTask(list);
     }
 
     /**
@@ -107,6 +105,31 @@ public class DynamicTask {
     }
 
     /**
+     * 动态任务处理
+     * @param list
+     */
+    private void executTask(List<Object> list){
+        for (Object obj : list) {
+            if (Objects.isNull(obj)) {
+                continue;
+            }
+            String taskNo = String.valueOf(obj);
+            ScheduledFuture future = map.get(taskNo);
+            if (Objects.isNull(future)) {
+                // 根据task名称获取任务执行规则cron
+                Object o = redisUtils.get(String.format("%s_%s", TASK_CRON, taskNo));
+                String cron = Objects.isNull(o) ? null : o.toString();
+                if (StringUtils.isBlank(cron)) {
+                    continue;
+                }
+                Thread thread = new Thread(() -> quartzService.dealWithWork(taskNo));
+                future = threadPoolTaskScheduler.schedule(thread, new CronTrigger(cron));
+                map.put(taskNo, future);
+            }
+        }
+    }
+
+    /**
      * 结束任务
      * @param future
      */
@@ -121,5 +144,4 @@ public class DynamicTask {
             future.cancel(true);
         }
     }
-
 }
