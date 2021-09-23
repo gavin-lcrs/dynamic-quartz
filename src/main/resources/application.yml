@@ -1,23 +1,11 @@
-server:
-  port: 9010
+nacos:
+  config:
+    server-addr: nacos.lcrs.vip
+    type: yaml
+    auto-refresh: true
+    data-id: quartz.yml
+    remote-first: true
+    namespace: a5a6c5e6-e712-4757-b192-911c1c5a2710
+    bootstrap:
+      enable: true
 
-
-spring:
-  redis:
-    host: 127.0.0.1
-    port: 6379
-    password: 123456
-
-
-xxl:
-  job:
-    admin:
-      addresses: https://127.0.0.1/xxl-job-admin
-    accessToken:
-    executor:
-      appname: ali-executor
-      address:
-      port: 18001
-      ip:
-      logpath: /data/dynamic/log
-      logretentiondays: 30

@@ -1,8 +1,8 @@
 package com.gavin.quartz.config;
 
+import com.alibaba.nacos.api.config.annotation.NacosValue;
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,28 +15,28 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class XxlJobConfig {
 
-    @Value(value = "${xxl.job.admin.addresses}")
+    @NacosValue(value = "${xxl.job.admin.addresses}", autoRefreshed = true)
     private String adminAddresses;
 
-    @Value(value = "${xxl.job.accessToken}")
+    @NacosValue(value = "${xxl.job.accessToken}", autoRefreshed = true)
     private String accessToken;
 
-    @Value(value = "${xxl.job.executor.appname}")
+    @NacosValue(value = "${xxl.job.executor.appname}", autoRefreshed = true)
     private String appname;
 
-    @Value(value = "${xxl.job.executor.address}")
+    @NacosValue(value = "${xxl.job.executor.address}", autoRefreshed = true)
     private String address;
 
-    @Value(value = "${xxl.job.executor.ip}")
+    @NacosValue(value = "${xxl.job.executor.ip}", autoRefreshed = true)
     private String ip;
 
-    @Value(value = "${xxl.job.executor.port}")
+    @NacosValue(value = "${xxl.job.executor.port}", autoRefreshed = true)
     private int port;
 
-    @Value(value = "${xxl.job.executor.logpath}")
+    @NacosValue(value = "${xxl.job.executor.logpath}", autoRefreshed = true)
     private String logPath;
 
-    @Value(value = "${xxl.job.executor.logretentiondays}")
+    @NacosValue(value = "${xxl.job.executor.logretentiondays}", autoRefreshed = true)
     private int logRetentionDays;
 
 
